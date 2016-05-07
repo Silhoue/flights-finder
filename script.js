@@ -1,60 +1,68 @@
 // TODO support more airports
-// TODO suport more airlines
-var airportFrom = "WMI"; // POZ
-var airportTo = "STN"; // BRS
-var minDate = "2016-07-15";
-var maxDate = "2016-09-15";
-var allowedDaysThere = [6, 0]; // Sunday & Saturday
-var allowedDaysBack = [1, 2, 3, 4, 5, 6, 0];
-var minSpanInDays = 6;
-var maxSpanInDays = 8;
+// TODO suport more airlines - WizzAir, EasyJet
 
-console.log(airportFrom + "-" + airportTo + ", from " + minDate + " to " + maxDate + ", " +
-	minSpanInDays +  "-" + maxSpanInDays + " days");
+document.querySelector("form").addEventListener("submit", findFlights)
+
+function findFlights (e) {
+	e.preventDefault();
+	const formData = e.srcElement.children;
+
+	var airportFrom = formData.airportFrom.value; // WMI, POZ
+	var airportTo = formData.airportTo.value; // STN, BRS
+	var minDate = formData.minDate.value;
+	var maxDate = formData.maxDate.value;
+	var allowedDaysThere = [6, 0]; // Sunday & Saturday
+	var allowedDaysBack = [1, 2, 3, 4, 5, 6, 0];
+	var spanInDaysMin = formData.spanInDaysMin.value;
+	var spanInDaysMax = formData.spanInDaysMax.value;
+
+	console.log(airportFrom + "-" + airportTo + ", from " + minDate + " to " + maxDate + ", " +
+		spanInDaysMin +  "-" + spanInDaysMax + " days");
 
 
-minDate = new Date(minDate);
-maxDate = new Date(maxDate);
+	minDate = new Date(minDate);
+	maxDate = new Date(maxDate);
 
-fetchAllFlights(airportFrom, airportTo, minDate, maxDate)
-	.then(mergeFlights)
-	.then(function (flights) {
-		var flightsThere = filterFlights(flights.outbound, minDate, maxDate, allowedDaysThere);
-		var flightsBack = filterFlights(flights.inbound, minDate, maxDate, allowedDaysBack);
+	fetchAllFlights(airportFrom, airportTo, minDate, maxDate)
+		.then(mergeFlights)
+		.then(function (flights) {
+			var flightsThere = filterFlights(flights.outbound, minDate, maxDate, allowedDaysThere);
+			var flightsBack = filterFlights(flights.inbound, minDate, maxDate, allowedDaysBack);
 
-		var flightsPaired = [];
-		flightsThere.forEach(function (flightThere) {
-			flightsBack.forEach(function (flightBack) {
-				var spanInDays = getSpanInDays(flightThere, flightBack)
-				if (maxSpanInDays >= spanInDays && spanInDays >= minSpanInDays) {
-					flightsPaired.push({
-						price: (flightThere.price + flightBack.price).toFixed(2),
-						spanInDays: spanInDays,
-						there: flightThere,
-						back: flightBack
-					});
-				}
-			});
-		});
-
-		if (!flightsPaired.length) {
-			console.log("No flights found")
-		} else {
-			flightsPaired
-				.sort(function (flights1, flights2) {
-					return flights1.price - flights2.price;
-				})
-				.slice(0, 10)
-				.forEach(function (flights) {
-					console.log(
-						flights.price + " " + flights.there.date.toDateString() + "-" + flights.back.date.toDateString() +
-						" (" + flights.spanInDays + " days, " +
-							flights.there.from + "-" + flights.there.to + " " + flights.there.price + flights.there.currency + " + " +
-							flights.back.from + "-" + flights.back.to + " " + flights.back.price + flights.back.currency + ")"
-					);
+			var flightsPaired = [];
+			flightsThere.forEach(function (flightThere) {
+				flightsBack.forEach(function (flightBack) {
+					var spanInDays = getSpanInDays(flightThere, flightBack)
+					if (spanInDaysMax >= spanInDays && spanInDays >= spanInDaysMin) {
+						flightsPaired.push({
+							price: (flightThere.price + flightBack.price).toFixed(2),
+							spanInDays: spanInDays,
+							there: flightThere,
+							back: flightBack
+						});
+					}
 				});
-		}
-	});
+			});
+
+			if (!flightsPaired.length) {
+				console.log("No flights found")
+			} else {
+				flightsPaired
+					.sort(function (flights1, flights2) {
+						return flights1.price - flights2.price;
+					})
+					.slice(0, 10)
+					.forEach(function (flights) {
+						console.log(
+							flights.price + " " + flights.there.date.toDateString() + "-" + flights.back.date.toDateString() +
+							" (" + flights.spanInDays + " days, " +
+								flights.there.from + "-" + flights.there.to + " " + flights.there.price + flights.there.currency + " + " +
+								flights.back.from + "-" + flights.back.to + " " + flights.back.price + flights.back.currency + ")"
+						);
+					});
+			}
+		});
+}
 
 
 function fetchAllFlights (airportFrom, airportTo, minDate, maxDate) {

@@ -3,9 +3,25 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
+		<link href='https://fonts.googleapis.com/css?family=Lato:300,400' rel='stylesheet' type='text/css'>
+		<link href="styles.css" rel="stylesheet" type="text/css">
 	</head>
 
 	<body>
-		<script src="./script.js"></script>
+		<header>
+			<h1>Flights finder</h1>
+		</header>
+		<form>
+			I'd like to fly from <input type="text" name="airportFrom" placeholder="WMI" autocomplete="off" required />
+			to <input type="text" name="airportTo" placeholder="STN" autocomplete="off" required /> (and back),
+			somewhere between <input type="date" name="minDate" required /></label>
+			and <input type="date" name="maxDate" required /></label>.
+			</br>
+			I'd like to stay for <input type="number" name="spanInDaysMin" min="0" required />
+			to <input type="number" name="spanInDaysMax" min="0" required /> days.
+
+			<button type="submit">Find flights</button>
+		</form>
+		<script src="script.js"></script>
 	</body>
 </html>

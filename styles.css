@@ -1,0 +1,64 @@
+body {
+	margin: 0;
+}
+body, input, button {
+	font-family: 'Lato', sans-serif;
+}
+body, input {
+	color: #C3D4E2;
+	background-color: #497393;
+	font-size: 24px;
+	font-weight: 300;
+	line-height: 2;
+	letter-spacing: 1px;
+}
+header {
+	color: #C3D4E2;
+	background-color: #103A5A;
+}
+h1, form {
+	max-width: 960px;
+	padding: 0 20px;
+	margin: 20px auto;
+}
+input {
+	color: #103A5A;
+	font-family: cursive;
+	text-align: center;
+	border: none;
+	border-bottom: 1px dashed #C3D4E2;
+}
+input[type=date] {
+	width: 10em;
+}
+input[type=number] {
+	width: 2em;
+}
+input:focus {
+	outline: none;
+}
+button {
+	color: #8C5710;
+	background-color: #E5B06A;
+	font-size: 16px;
+	font-weight: 400;
+	line-height: 3;
+	letter-spacing: 2px;
+	text-transform: uppercase;
+	display: block;
+	padding: 0 20px;
+	margin-top: 20px;
+	border: none;
+	border-radius: 24px;
+}
+button:before {
+	/* airplane */
+	content: "\2708";
+	padding-right: 10px;
+}
+button:hover, button:active {
+	color: #E5B06A;
+	background-color: transparent;
+	padding: 0 18px;
+	border: 2px dotted #E5B06A;
+}
