@@ -2,7 +2,12 @@
 // TODO support more airports
 // TODO suport more airlines - WizzAir, EasyJet
 
-document.querySelector("form").addEventListener("submit", findFlights)
+document.querySelector(".advanced-options-toggle").addEventListener("click", showAdvancedOptions);
+document.querySelector("form").addEventListener("submit", findFlights);
+
+function showAdvancedOptions (e) {
+	e.currentTarget.className += " active";
+}
 
 function findFlights (e) {
 	e.preventDefault();
@@ -12,8 +17,8 @@ function findFlights (e) {
 	var airportTo = formData.airportTo.value; // STN, BRS
 	var minDate = formData.minDate.value;
 	var maxDate = formData.maxDate.value;
-	var allowedDaysThere = [6, 0]; // Sunday & Saturday
-	var allowedDaysBack = [1, 2, 3, 4, 5, 6, 0];
+	var allowedDaysThere = getAllowedDays(formData.allowedDaysThere.elements);
+	var allowedDaysBack = getAllowedDays(formData.allowedDaysBack.elements);
 	var spanInDaysMin = formData.spanInDaysMin.value;
 	var spanInDaysMax = formData.spanInDaysMax.value;
 
@@ -65,11 +70,17 @@ function findFlights (e) {
 		});
 }
 
+function getAllowedDays (inputs) {
+	var daysArray = [];
+	for (var i in inputs) {
+		inputs[i].checked && daysArray.push(Number(inputs[i].value))
+	}
+	return daysArray;
+}
 
 function getDatesBetween (minDate, maxDate) {
 	const dates = [];
 	const date = new Date(minDate);
-	const flightsFetches = [];
 	do {
 		dates.push(new Date(date));
 		date.setUTCMonth(date.getUTCMonth() + 1);

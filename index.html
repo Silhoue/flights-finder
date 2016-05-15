@@ -12,15 +12,37 @@
 			<h1>Flights finder</h1>
 		</header>
 		<form>
-			I'd like to fly from <input type="text" name="airportFrom" placeholder="WMI" autocomplete="off" required />
-			to <input type="text" name="airportTo" placeholder="STN" autocomplete="off" required /> (and back),
-			somewhere between <input type="date" name="minDate" required /></label>
-			and <input type="date" name="maxDate" required /></label>.
-			</br>
-			I'd like to stay for <input type="number" name="spanInDaysMin" min="0" required />
-			to <input type="number" name="spanInDaysMax" min="0" required /> days.
-
-			<button type="submit">Find flights</button>
+			<div class="basic-options">
+				I'd like to fly from <input type="text" name="airportFrom" placeholder="WMI" autocomplete="off" required />
+				to <input type="text" name="airportTo" placeholder="STN" autocomplete="off" required /> (and back),
+				somewhere between <input type="date" name="minDate" required />
+				and <input type="date" name="maxDate" required />.
+				</br>
+				I'd like to stay for <input type="number" name="spanInDaysMin" min="0" required />
+				to <input type="number" name="spanInDaysMax" min="0" required /> days.
+			</div>
+			<button type="button" class="advanced-options-toggle">Advanced options</button>
+			<fieldset name="allowedDaysThere" class="advanced-options">
+				<legend>Flying there on</legend>
+				<label><input type="checkbox" value="1" checked/>Mon</label
+				><label><input type="checkbox" value="2" checked/>Tue</label
+				><label><input type="checkbox" value="3" checked/>Wed</label
+				><label><input type="checkbox" value="4" checked/>Thu</label
+				><label><input type="checkbox" value="5" checked/>Fri</label
+				><label><input type="checkbox" value="6" checked/>Sat</label
+				><label><input type="checkbox" value="0" checked/>Sun</label>
+			</fieldset>
+			<fieldset name="allowedDaysBack" class="advanced-options">
+				<legend>Flying back on</legend>
+				<label><input type="checkbox" value="1" checked/>Mon</label
+				><label><input type="checkbox" value="2" checked/>Tue</label
+				><label><input type="checkbox" value="3" checked/>Wed</label
+				><label><input type="checkbox" value="4" checked/>Thu</label
+				><label><input type="checkbox" value="5" checked/>Fri</label
+				><label><input type="checkbox" value="6" checked/>Sat</label
+				><label><input type="checkbox" value="0" checked/>Sun</label>
+			</fieldset>
+			<button type="submit" class="submit-button">Find flights</button>
 		</form>
 		<script src="script.js"></script>
 	</body>
