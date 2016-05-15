@@ -1,3 +1,4 @@
+// TODO print results to UI
 // TODO support more airports
 // TODO suport more airlines - WizzAir, EasyJet
 
@@ -5,7 +6,7 @@ document.querySelector("form").addEventListener("submit", findFlights)
 
 function findFlights (e) {
 	e.preventDefault();
-	const formData = e.srcElement.children;
+	const formData = e.srcElement.elements;
 
 	var airportFrom = formData.airportFrom.value; // WMI, POZ
 	var airportTo = formData.airportTo.value; // STN, BRS
@@ -19,15 +20,15 @@ function findFlights (e) {
 	console.log(airportFrom + "-" + airportTo + ", from " + minDate + " to " + maxDate + ", " +
 		spanInDaysMin +  "-" + spanInDaysMax + " days");
 
-
 	minDate = new Date(minDate);
 	maxDate = new Date(maxDate);
 
-	fetchAllFlights(airportFrom, airportTo, minDate, maxDate)
+	const dates = getDatesBetween(minDate, maxDate);
+	fetchAllFlights(airportFrom, airportTo, dates)
 		.then(mergeFlights)
 		.then(function (flights) {
-			var flightsThere = filterFlights(flights.outbound, minDate, maxDate, allowedDaysThere);
-			var flightsBack = filterFlights(flights.inbound, minDate, maxDate, allowedDaysBack);
+			var flightsThere = filterFlights(parseRyanairFlights(flights.outbound), minDate, maxDate, allowedDaysThere);
+			var flightsBack = filterFlights(parseRyanairFlights(flights.inbound), minDate, maxDate, allowedDaysBack);
 
 			var flightsPaired = [];
 			flightsThere.forEach(function (flightThere) {
@@ -65,13 +66,21 @@ function findFlights (e) {
 }
 
 
-function fetchAllFlights (airportFrom, airportTo, minDate, maxDate) {
+function getDatesBetween (minDate, maxDate) {
+	const dates = [];
 	const date = new Date(minDate);
 	const flightsFetches = [];
 	do {
-		flightsFetches.push(fetchFlights(airportFrom, airportTo, date));
+		dates.push(new Date(date));
 		date.setUTCMonth(date.getUTCMonth() + 1);
 	} while (date <= maxDate)
+	return dates;
+}
+
+function fetchAllFlights (airportFrom, airportTo, dates) {
+	const flightsFetches = dates.map(function (date) {
+		return fetchRyanairFlights(airportFrom, airportTo, date);
+	});
 
 	return Promise.all(flightsFetches);
 }
@@ -84,7 +93,7 @@ function getDateString (date) {
 	return date.getUTCFullYear() + "-" + pad(date.getUTCMonth() + 1) + "-01";
 }
 
-function fetchFlights (airportFrom, airportTo, date) {
+function fetchRyanairFlights (airportFrom, airportTo, date) {
 	const dateString = getDateString(date);
 	const url = "https://api.ryanair.com/farefinder/3/roundTripFares/" + airportFrom + "/" + airportTo +
 		"/cheapestPerDay?inboundMonthOfDate=" + dateString + "&outboundMonthOfDate=" + dateString;
@@ -122,7 +131,7 @@ function mergeFlights (flights) {
 	}
 }
 
-function filterFlights (flights, minDate, maxDate, allowedDays) {
+function parseRyanairFlights (flights) {
 	return flights
 		.filter(function (flight) {
 			return !flight.soldOut && !flight.unavailable;
@@ -136,6 +145,10 @@ function filterFlights (flights, minDate, maxDate, allowedDays) {
 				date: new Date(flight.day)
 			}
 		})
+}
+
+function filterFlights (flights, minDate, maxDate, allowedDays) {
+	return flights
 		.filter(function (flight) {
 			return (maxDate >= flight.date) && (flight.date >= minDate) && allowedDays.includes(flight.date.getDay());
 		});
