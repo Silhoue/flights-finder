@@ -1,5 +1,4 @@
 // TODO print results to UI
-// TODO support more airports
 // TODO suport more airlines - WizzAir, EasyJet
 
 document.querySelector(".advanced-options-toggle").addEventListener("click", showAdvancedOptions);
@@ -13,23 +12,17 @@ function findFlights (e) {
 	e.preventDefault();
 	const formData = e.srcElement.elements;
 
-	var airportFrom = formData.airportFrom.value; // WMI, POZ
-	var airportTo = formData.airportTo.value; // STN, BRS
-	var minDate = formData.minDate.value;
-	var maxDate = formData.maxDate.value;
-	var allowedDaysThere = getAllowedDays(formData.allowedDaysThere.elements);
-	var allowedDaysBack = getAllowedDays(formData.allowedDaysBack.elements);
-	var spanInDaysMin = formData.spanInDaysMin.value;
-	var spanInDaysMax = formData.spanInDaysMax.value;
-
-	console.log(airportFrom + "-" + airportTo + ", from " + minDate + " to " + maxDate + ", " +
-		spanInDaysMin +  "-" + spanInDaysMax + " days");
-
-	minDate = new Date(minDate);
-	maxDate = new Date(maxDate);
+	const airportsFrom = (formData.airportsFrom.value).split(/\W+/);
+	const airportsTo = (formData.airportsTo.value).split(/\W+/);
+	const minDate = formData.minDate.valueAsDate;
+	const maxDate = formData.maxDate.valueAsDate;
+	const allowedDaysThere = getAllowedDays(formData.allowedDaysThere.elements);
+	const allowedDaysBack = getAllowedDays(formData.allowedDaysBack.elements);
+	const spanInDaysMin = formData.spanInDaysMin.value;
+	const spanInDaysMax = formData.spanInDaysMax.value;
 
 	const dates = getDatesBetween(minDate, maxDate);
-	fetchAllFlights(airportFrom, airportTo, dates)
+	fetchAllFlights(airportsFrom, airportsTo, dates)
 		.then(mergeFlights)
 		.then(function (flights) {
 			var flightsThere = filterFlights(parseRyanairFlights(flights.outbound), minDate, maxDate, allowedDaysThere);
@@ -88,10 +81,15 @@ function getDatesBetween (minDate, maxDate) {
 	return dates;
 }
 
-function fetchAllFlights (airportFrom, airportTo, dates) {
-	const flightsFetches = dates.map(function (date) {
-		return fetchRyanairFlights(airportFrom, airportTo, date);
-	});
+function fetchAllFlights (airportsFrom, airportsTo, dates) {
+	const flightsFetches = [];
+	airportsFrom.forEach(function (airportFrom) {
+		airportsTo.forEach(function (airportTo) {
+			dates.forEach(function (date) {
+				flightsFetches.push(fetchRyanairFlights(airportFrom, airportTo, date));
+			})
+		})
+	})
 
 	return Promise.all(flightsFetches);
 }
