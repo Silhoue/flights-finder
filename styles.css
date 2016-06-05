@@ -40,11 +40,12 @@ button {
 }
 .advanced-options-toggle {
 	color: #E5B06A;
-    background-color: transparent;
+	background-color: transparent;
 	font-size: 16px;
-    font-weight: inherit;
-    display: block;
-    padding: 0;
+	font-weight: inherit;
+	display: block;
+	padding: 0;
+	margin-top: 10px;
 	border: none;
 }
 .advanced-options-toggle:hover {
@@ -77,12 +78,14 @@ button {
 	letter-spacing: 2px;
 	text-transform: uppercase;
 	display: block;
-	padding: 0 20px;
+	padding: 0 18px;
 	margin-top: 20px;
-	border: none;
+	border-width: 0 2px;
+	border-style: solid;
+	border-color: #E5B06A;
 	border-radius: 24px;
 }
-.submit-button:before {
+.submit-button::before {
 	/* airplane */
 	content: "\2708";
 	padding-right: 10px;
@@ -90,6 +93,49 @@ button {
 .submit-button:hover {
 	color: #E5B06A;
 	background-color: transparent;
-	padding: 0 18px;
-	border: 2px dotted #E5B06A;
+}
+.results {
+	font-size: 16px;
+	line-height: 1;
+	letter-spacing: 0.5px;
+	max-width: 500px;
+	margin: 20px auto;
+	padding: 0 20px;
+}
+.flight {
+	list-style: none;
+	margin: 10px 0;
+}
+.flight-summary,
+.flight-details {
+	display: inline-block;
+	padding: 10px;
+}
+.flight-summary {
+	background-color: #103A5A;
+	text-align: center;
+}
+.flight-details {
+	color: #103A5A;
+	background-color: #C3D4E2;
+}
+.flight-details-there,
+.flight-details-back {
+	text-indent: -17px;
+    padding-left: 17px;
+}
+.flight-details-there::before,
+.flight-details-back::before {
+	/* airplane */
+	content: "\2708";
+	font-size: 19px;
+    line-height: 16px;
+	text-indent: 0;
+	display: inline-block;
+	vertical-align: top;
+	width: 15px;
+    margin-right: 4px;
+}
+.flight-details-back::before {
+	transform: scale(-1, 1);
 }

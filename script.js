@@ -1,6 +1,7 @@
 // TODO print results to UI
 // TODO suport more airlines - WizzAir, EasyJet
 
+const results = document.querySelector(".results");
 document.querySelector(".advanced-options-toggle").addEventListener("click", showAdvancedOptions);
 document.querySelector("form").addEventListener("submit", findFlights);
 
@@ -10,10 +11,11 @@ function showAdvancedOptions (e) {
 
 function findFlights (e) {
 	e.preventDefault();
+
 	const formData = e.srcElement.elements;
 
-	const airportsFrom = (formData.airportsFrom.value).split(/\W+/);
-	const airportsTo = (formData.airportsTo.value).split(/\W+/);
+	const airportsFrom = formData.airportsFrom.value.trim().split(/\W+/);
+	const airportsTo = formData.airportsTo.value.trim().split(/\W+/);
 	const minDate = formData.minDate.valueAsDate;
 	const maxDate = formData.maxDate.valueAsDate;
 	const allowedDaysThere = getAllowedDays(formData.allowedDaysThere.elements);
@@ -25,15 +27,15 @@ function findFlights (e) {
 	fetchAllFlights(airportsFrom, airportsTo, dates)
 		.then(mergeFlights)
 		.then(function (flights) {
-			var flightsThere = filterFlights(parseRyanairFlights(flights.outbound), minDate, maxDate, allowedDaysThere);
-			var flightsBack = filterFlights(parseRyanairFlights(flights.inbound), minDate, maxDate, allowedDaysBack);
+			const flightsThere = filterFlights(parseRyanairFlights(flights.outbound), minDate, maxDate, allowedDaysThere);
+			const flightsBack = filterFlights(parseRyanairFlights(flights.inbound), minDate, maxDate, allowedDaysBack);
 
-			var flightsPaired = [];
+			var flightsPairs = [];
 			flightsThere.forEach(function (flightThere) {
 				flightsBack.forEach(function (flightBack) {
 					var spanInDays = getSpanInDays(flightThere, flightBack)
 					if (spanInDaysMax >= spanInDays && spanInDays >= spanInDaysMin) {
-						flightsPaired.push({
+						flightsPairs.push({
 							price: (flightThere.price + flightBack.price).toFixed(2),
 							spanInDays: spanInDays,
 							there: flightThere,
@@ -43,22 +45,16 @@ function findFlights (e) {
 				});
 			});
 
-			if (!flightsPaired.length) {
-				console.log("No flights found")
+			if (!flightsPairs.length) {
+				results.innerHTML = "No flights found";
 			} else {
-				flightsPaired
+				flightsPairs = flightsPairs
 					.sort(function (flights1, flights2) {
 						return flights1.price - flights2.price;
 					})
 					.slice(0, 10)
-					.forEach(function (flights) {
-						console.log(
-							flights.price + " " + flights.there.date.toDateString() + "-" + flights.back.date.toDateString() +
-							" (" + flights.spanInDays + " days, " +
-								flights.there.from + "-" + flights.there.to + " " + flights.there.price + flights.there.currency + " + " +
-								flights.back.from + "-" + flights.back.to + " " + flights.back.price + flights.back.currency + ")"
-						);
-					});
+
+				printResults(flightsPairs);
 			}
 		});
 }
@@ -165,4 +161,32 @@ function filterFlights (flights, minDate, maxDate, allowedDays) {
 
 function getSpanInDays (flight1, flight2) {
 	return (flight2.date.getTime() - flight1.date.getTime()) / (24 * 60 * 60 * 1000);
+}
+
+function printResults(flightsPairs) {
+	var innerHTML = "";
+	flightsPairs.forEach(function (flightsPair) {
+		innerHTML += getHTML(flightsPair);
+	});
+	results.innerHTML = innerHTML;
+}
+
+function getHTML(flightsPair) {
+	const priceTotal = flightsPair.price + " " + flightsPair.there.currency;
+	const priceThere = flightsPair.there.price + " " + flightsPair.there.currency;
+	const priceBack = flightsPair.back.price + " " + flightsPair.back.currency;
+	const dateThere = flightsPair.there.date.toDateString();
+	const dateBack = flightsPair.back.date.toDateString();
+
+	return "<li class=\"flight \">" +
+			"<div class=\"flight-summary\">" + priceTotal + "<br/>" + flightsPair.spanInDays + " days</div>" +
+			"<div class=\"flight-details\">" +
+				"<div class=\"flight-details-there\">" +
+					flightsPair.there.from + "-" + flightsPair.there.to + ", " + dateThere + ", " + priceThere +
+				"</div>" +
+				"<div class=\"flight-details-back " + flightsPair.back.carrier + "\">" +
+					flightsPair.back.from + "-" + flightsPair.back.to + ", " + dateBack + ", " + priceBack +
+				"</div>" +
+			"</div>" +
+		"</li>"
 }
