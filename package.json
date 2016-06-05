@@ -1,0 +1,18 @@
+{
+  "name": "flights-finder",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "author": "Silhoue",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:Silhoue/flights-finder.git"
+  },
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^4.13.4"
+  }
+}
