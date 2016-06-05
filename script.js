@@ -1,4 +1,3 @@
-// TODO print results to UI
 // TODO suport more airlines - WizzAir, EasyJet
 
 const results = document.querySelector(".results");
@@ -94,12 +93,8 @@ function pad (val) {
 	return (val < 10) ? ("0" + val) : val
 }
 
-function getDateString (date) {
-	return date.getUTCFullYear() + "-" + pad(date.getUTCMonth() + 1) + "-01";
-}
-
 function fetchRyanairFlights (airportFrom, airportTo, date) {
-	const dateString = getDateString(date);
+	const dateString = date.getUTCFullYear() + "-" + pad(date.getUTCMonth() + 1) + "-01";
 	const url = "https://api.ryanair.com/farefinder/3/roundTripFares/" + airportFrom + "/" + airportTo +
 		"/cheapestPerDay?inboundMonthOfDate=" + dateString + "&outboundMonthOfDate=" + dateString;
 	return fetch(url)
@@ -119,16 +114,19 @@ function fetchRyanairFlights (airportFrom, airportTo, date) {
 					to: airportFrom
 				})
 			});
-			return response;
+			return {
+				outbound: response.outbound.fares,
+				inbound: response.inbound.fares
+			};
 		});
 }
 
 function mergeFlights (flights) {
-	var outboundFlights = flights.reduce(function (prev, next) {
-		return prev.concat(next.outbound.fares);
+	var outboundFlights = flights.reduce(function (result, next) {
+		return result.concat(next.outbound);
 	}, []);
-	var inboundFlights = flights.reduce(function (prev, next) {
-		return prev.concat(next.inbound.fares);
+	var inboundFlights = flights.reduce(function (result, next) {
+		return result.concat(next.inbound);
 	}, []);
 	return {
 		outbound: outboundFlights,
@@ -139,14 +137,14 @@ function mergeFlights (flights) {
 function parseRyanairFlights (flights) {
 	return flights
 		.filter(function (flight) {
-			return !flight.soldOut && !flight.unavailable;
+			return flight.price && !flight.soldOut && !flight.unavailable;
 		})
 		.map(function (flight) {
 			return {
 				from: flight.from,
 				to: flight.to,
 				price: flight.price.value,
-				currency: flight.price.currencyCode,
+				currency: flight.price.currencySymbol,
 				date: new Date(flight.day)
 			}
 		})
