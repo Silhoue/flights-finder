@@ -1,20 +1,24 @@
 const express = require("express");
-var bodyParser = require('body-parser');
+const bodyParser = require("body-parser");
+const flightsFinder = require("./src/flightsFinder");
 
 const port = 3000;
 
 const app = express();
-app.disable("x-powered-by")
 
-app.use(bodyParser.json());
+app.disable("x-powered-by")
 
 app.use(express.static("src/public"));
 
+app.use(bodyParser.json());
+
 app.post("/", function(req, res) {
-	console.log(req.body);
-  	res.json({})
+	flightsFinder(req.body)
+		.then(function (results) {
+			res.json(results);
+		})
 });
 
 app.listen(port, function () {
-  console.log("App listening on port " + port);
+	console.log("App listening on port " + port);
 });
