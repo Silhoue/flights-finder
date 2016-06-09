@@ -32,11 +32,13 @@ function findFlights (e) {
 	.then(function (response) {
 		return response.json();
 	})
-	.then(function (flights) {
-		if (!flights.length) {
-			results.innerHTML = "No flights found";
+	.then(function (response) {
+		if (response.error) {
+			results.innerHTML = "Error: " + response.error;
+		} else if (response.count) {
+			printResults(response.flights);
 		} else {
-			printResults(flights);
+			results.innerHTML = "No flights found";
 		}
 	})
 }

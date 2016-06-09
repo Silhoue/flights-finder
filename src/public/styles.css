@@ -139,3 +139,7 @@ button {
 .flight-details-back::before {
 	transform: scale(-1, 1);
 }
+.ryanair.flight-details-there::before,
+.ryanair.flight-details-back::before {
+	color: #ebbd10;
+}

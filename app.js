@@ -17,6 +17,10 @@ app.post("/", function(req, res) {
 		.then(function (results) {
 			res.json(results);
 		})
+		.catch(function(error) {
+			console.log(error.stack)
+			res.status(500).send({ error: error.message });
+		})
 });
 
 app.listen(port, function () {

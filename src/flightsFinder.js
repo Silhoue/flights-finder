@@ -1,7 +1,6 @@
 const fetch = require("node-fetch");
 
 module.exports = function findFlights (body) {
-	console.log(body);
 	const airportsFrom = body.airportsFrom
 	const airportsTo = body.airportsTo
 	const minDate = new Date(body.minDate)
@@ -13,10 +12,11 @@ module.exports = function findFlights (body) {
 
 	const dates = getDatesBetween(minDate, maxDate);
 	return fetchAllFlights(airportsFrom, airportsTo, dates)
-		.then(mergeFlights)
-		.then(function (flights) {
-			const flightsThere = filterFlights(parseRyanairFlights(flights.outbound), minDate, maxDate, allowedDaysThere);
-			const flightsBack = filterFlights(parseRyanairFlights(flights.inbound), minDate, maxDate, allowedDaysBack);
+		.then(function (ryanairFlights) {
+			ryanairFlights = ryanairFlights.map(parseRyanairFlights);
+
+			const flightsThere = filterFlights(ryanairFlights[0], minDate, maxDate, allowedDaysThere);
+			const flightsBack = filterFlights(ryanairFlights[1], minDate, maxDate, allowedDaysBack);
 
 			var flightsPairs = [];
 			flightsThere.forEach(function (flightThere) {
@@ -34,14 +34,14 @@ module.exports = function findFlights (body) {
 			});
 
 			if (!flightsPairs.length) {
-				return {};
+			return {
+				count: flightsPairs.length,
+				flights: flightsPairs
+					.sort(function (flights1, flights2) {
+						return flights1.price - flights2.price;
+					})
+					.slice(0, 10)
 			}
-
-			return flightsPairs
-				.sort(function (flights1, flights2) {
-					return flights1.price - flights2.price;
-				})
-				.slice(0, 2)
 		})
 }
 
@@ -56,16 +56,16 @@ function getDatesBetween (minDate, maxDate) {
 }
 
 function fetchAllFlights (airportsFrom, airportsTo, dates) {
-	const flightsFetches = [];
+	const ryanairFlightsFetches = [];
 	airportsFrom.forEach(function (airportFrom) {
 		airportsTo.forEach(function (airportTo) {
 			dates.forEach(function (date) {
-				flightsFetches.push(fetchRyanairFlights(airportFrom, airportTo, date));
+				ryanairFlightsFetches.push(fetchRyanairFlights(airportFrom, airportTo, date));
 			})
 		})
 	})
 
-	return Promise.all(flightsFetches);
+	return Promise.all(ryanairFlightsFetches).then(mergeFlights);
 }
 
 function pad (val) {
@@ -107,10 +107,7 @@ function mergeFlights (flights) {
 	var inboundFlights = flights.reduce(function (result, next) {
 		return result.concat(next.inbound);
 	}, []);
-	return {
-		outbound: outboundFlights,
-		inbound: inboundFlights
-	}
+	return [outboundFlights, inboundFlights]
 }
 
 function parseRyanairFlights (flights) {
