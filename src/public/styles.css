@@ -143,3 +143,7 @@ button {
 .ryanair.flight-details-back::before {
 	color: #ebbd10;
 }
+.wizz-air.flight-details-there::before,
+.wizz-air.flight-details-back::before {
+	color: #d1007c;
+}

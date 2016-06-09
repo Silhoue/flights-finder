@@ -1,4 +1,5 @@
-// TODO suport more airlines - WizzAir, EasyJet
+// TODO support more airlines - EasyJet
+// TODO support request cache
 
 const results = document.querySelector(".results");
 document.querySelector(".advanced-options-toggle").addEventListener("click", showAdvancedOptions);
