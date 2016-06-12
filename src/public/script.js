@@ -40,6 +40,9 @@ function findFlights (e) {
 			results.innerHTML = "No flights found";
 		}
 	})
+	.catch(function (error) {
+		results.innerHTML = error.message;
+	})
 }
 
 function getAllowedDays (inputs) {
