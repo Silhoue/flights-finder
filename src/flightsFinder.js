@@ -1,3 +1,6 @@
+// TODO support more airlines - EasyJet
+// TODO support request cache
+
 const ryanairHandler = require("./ryanairHandler");
 const wizzAirHandler = require("./wizzAirHandler");
 
@@ -17,10 +20,10 @@ module.exports = function findFlights (body) {
 			const ryanairFlights = mergeFlights(flights[0]).map(ryanairHandler.parse);
 			const wizzAirFlights = mergeFlights(flights[1]).map(wizzAirHandler.parse);
 
-			const flightsThere = ryanairFlights[0].concat(wizzAirFlights[0])
+			var flightsThere = ryanairFlights[0].concat(wizzAirFlights[0])
 			flightsThere = filterFlights(flightsThere, minDate, maxDate, allowedDaysThere);
 
-			const flightsBack = ryanairFlights[1].concat(wizzAirFlights[1]);
+			var flightsBack = ryanairFlights[1].concat(wizzAirFlights[1]);
 			flightsBack = filterFlights(flightsBack, minDate, maxDate, allowedDaysBack);
 
 			const flightsPairs = [];
@@ -90,7 +93,7 @@ function mergeFlights (flights) {
 function filterFlights (flights, minDate, maxDate, allowedDays) {
 	return flights
 		.filter(function (flight) {
-			return (maxDate >= flight.date) && (flight.date >= minDate) && (allowedDays.indexOf(flight.date.getDay()) >= 0);
+			return (maxDate >= flight.date) && (flight.date >= minDate) && (allowedDays.indexOf(flight.date.getUTCDay()) >= 0);
 		});
 }
 

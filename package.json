@@ -10,7 +10,7 @@
     "url": "git@github.com:Silhoue/flights-finder.git"
   },
   "scripts": {
-    "start": "node app.js"
+    "start": "node --use_strict app.js"
   },
   "dependencies": {
     "body-parser": "^1.15.1",

@@ -1,6 +1,3 @@
-// TODO support more airlines - EasyJet
-// TODO support request cache
-
 const results = document.querySelector(".results");
 document.querySelector(".advanced-options-toggle").addEventListener("click", showAdvancedOptions);
 document.querySelector("form").addEventListener("submit", findFlights);
@@ -12,6 +9,7 @@ function showAdvancedOptions (e) {
 function findFlights (e) {
 	e.preventDefault();
 
+	results.innerHTML = "Searching..."
 	const formData = e.srcElement.elements;
 
 	fetch("/", {
