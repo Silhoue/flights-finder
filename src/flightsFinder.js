@@ -13,6 +13,7 @@ module.exports = function findFlights (body) {
 	const allowedDaysBack = body.allowedDaysBack
 	const spanInDaysMin = body.spanInDaysMin
 	const spanInDaysMax = body.spanInDaysMax
+	const currencyRatio = 1
 
 	const dates = getDatesBetween(minDate, maxDate);
 	return fetchAllFlights(airportsFrom, airportsTo, dates)
@@ -32,7 +33,7 @@ module.exports = function findFlights (body) {
 					const spanInDays = getSpanInDays(flightThere, flightBack)
 					if (spanInDaysMax >= spanInDays && spanInDays >= spanInDaysMin) {
 						flightsPairs.push({
-							price: (flightThere.price + flightBack.price).toFixed(2),
+							price: +((flightThere.price + (flightBack.price * currencyRatio)).toFixed(2)),
 							spanInDays: spanInDays,
 							there: flightThere,
 							back: flightBack
