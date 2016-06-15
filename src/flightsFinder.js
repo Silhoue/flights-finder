@@ -55,6 +55,7 @@ module.exports = function findFlights (body) {
 function getDatesBetween (minDate, maxDate) {
 	const dates = [];
 	const date = new Date(minDate);
+	date.setUTCDate(1);
 	do {
 		dates.push(new Date(date));
 		date.setUTCMonth(date.getUTCMonth() + 1);
