@@ -1,14 +1,19 @@
 const fetch = require("node-fetch");
 
+var cache = {};
+
 function handleResponse (response) {
 	return response.ok ? response.json() : [];
 }
 
 module.exports = {
-	fetch: function fetchWizzAirFlights (airportFrom, airportTo, date) {
-		const urlBase = "https://cdn.static.wizzair.com/pl-PL/TimeTableAjax?year=" + date.getUTCFullYear() +
-			"&month=" + (date.getUTCMonth() + 1);
-		return Promise.all([
+	fetch: function fetchWizzAirFlights (airportFrom, airportTo, month, year) {
+		const key = airportFrom + airportTo + month + year
+		if (cache[key]) {
+			return cache[key];
+		}
+		const urlBase = "https://cdn.static.wizzair.com/pl-PL/TimeTableAjax?year=" + year + "&month=" + month;
+		return cache[key] = Promise.all([
 				fetch(urlBase + "&departureIATA=" + airportFrom + "&arrivalIATA=" + airportTo).then(handleResponse),
 				fetch(urlBase + "&departureIATA=" + airportTo + "&arrivalIATA=" + airportFrom).then(handleResponse)
 			])

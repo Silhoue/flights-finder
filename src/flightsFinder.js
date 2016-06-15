@@ -70,8 +70,10 @@ function fetchAllFlights (airportsFrom, airportsTo, dates) {
 	airportsFrom.forEach(function (airportFrom) {
 		airportsTo.forEach(function (airportTo) {
 			dates.forEach(function (date) {
-				ryanairFlightsFetches.push(ryanairHandler.fetch(airportFrom, airportTo, date));
-				wizzAirFlightsFetches.push(wizzAirHandler.fetch(airportFrom, airportTo, date));
+				var month = date.getUTCMonth() + 1;
+				var year = date.getUTCFullYear();
+				ryanairFlightsFetches.push(ryanairHandler.fetch(airportFrom, airportTo, month, year));
+				wizzAirFlightsFetches.push(wizzAirHandler.fetch(airportFrom, airportTo, month, year));
 			})
 		})
 	})

@@ -1,17 +1,23 @@
 const fetch = require("node-fetch");
 
+var cache = {};
+
 function pad (val) {
 	return (val < 10) ? ("0" + val) : val
 }
 
 module.exports = {
-	fetch: function fetchRyanairFlights (airportFrom, airportTo, date) {
-		const dateString = date.getUTCFullYear() + "-" + pad(date.getUTCMonth() + 1) + "-01";
+	fetch: function fetchRyanairFlights (airportFrom, airportTo, month, year) {
+		const key = airportFrom + airportTo + month + year
+		if (cache[key]) {
+			return cache[key];
+		}
+		const dateString = year + "-" + pad(month) + "-01";
 		const urlThere = "https://api.ryanair.com/farefinder/3/oneWayFares/" + airportFrom + "/" + airportTo +
 			"/cheapestPerDay?&outboundMonthOfDate=" + dateString;
 		const urlBack = "https://api.ryanair.com/farefinder/3/oneWayFares/" + airportTo + "/" + airportFrom +
 			"/cheapestPerDay?&outboundMonthOfDate=" + dateString;
-		return Promise.all([
+		return cache[key] = Promise.all([
 				fetch(urlThere)
 					.then(function (response) {
 						return response.json();
