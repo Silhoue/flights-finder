@@ -10,7 +10,7 @@ function findFlights (e) {
 	e.preventDefault();
 
 	results.innerHTML = "Searching..."
-	const formData = e.srcElement.elements;
+	const formData = e.target.elements;
 
 	fetch("/", {
 		method: "POST",
