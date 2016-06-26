@@ -33,10 +33,22 @@ button {
 	outline: none;
 }
 .basic-options input[type=date] {
-	width: 10em;
+	width: 8em;
 }
 .basic-options input[type=number] {
 	width: 2em;
+}
+.basic-options-currency,
+.advanced-options {
+	font-size: 18px;
+	line-height: 20px;
+	margin-top: 20px;
+}
+.basic-options-currency {
+	display: block;
+}
+.basic-options-currency input[type=number] {
+	width: 3em;
 }
 .advanced-options-toggle {
 	color: #E5B06A;
@@ -58,11 +70,8 @@ button {
 	display: inline-block;
 }
 .advanced-options {
-	font-size: 18px;
-	line-height: 20px;
 	display: none;
 	max-width: 264px;
-	margin-top: 20px;
 	border-color: #C3D4E2;
 }
 .advanced-options label {
@@ -98,7 +107,7 @@ button {
 	font-size: 16px;
 	line-height: 1;
 	letter-spacing: 0.5px;
-	max-width: 500px;
+	max-width: 520px;
 	margin: 20px auto;
 	padding: 0 20px;
 }

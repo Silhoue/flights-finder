@@ -25,7 +25,8 @@ function findFlights (e) {
 			allowedDaysThere: getAllowedDays(formData.allowedDaysThere.elements),
 			allowedDaysBack: getAllowedDays(formData.allowedDaysBack.elements),
 			spanInDaysMin: formData.spanInDaysMin.value,
-			spanInDaysMax: formData.spanInDaysMax.value
+			spanInDaysMax: formData.spanInDaysMax.value,
+			currencyRatio: formData.exchangeRate.value
 		})
 	})
 	.then(function (response) {

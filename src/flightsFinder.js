@@ -13,7 +13,7 @@ module.exports = function findFlights (body) {
 	const allowedDaysBack = body.allowedDaysBack
 	const spanInDaysMin = body.spanInDaysMin
 	const spanInDaysMax = body.spanInDaysMax
-	const currencyRatio = 1
+	const currencyRatio = body.currencyRatio
 
 	const dates = getDatesBetween(minDate, maxDate);
 	return fetchAllFlights(airportsFrom, airportsTo, dates)
