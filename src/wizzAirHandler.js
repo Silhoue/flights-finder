@@ -38,7 +38,10 @@ module.exports = {
 					to: flight.ArrivalStationCode,
 					price: priceValue,
 					currency: price[1],
-					date: new Date(flight.CurrentDate)
+					date: new Date(flight.CurrentDate),
+					hours: flight.Flights.map(function (flight) {
+						return flight.STD + "-" + flight.STA
+					})
 				}
 			})
 	}

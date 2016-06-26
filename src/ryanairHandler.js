@@ -60,7 +60,8 @@ module.exports = {
 					to: flight.to,
 					price: flight.price.value,
 					currency: flight.price.currencySymbol,
-					date: new Date(flight.day)
+					date: new Date(flight.day),
+					hours: []
 				}
 			})
 	}

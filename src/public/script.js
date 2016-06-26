@@ -71,14 +71,19 @@ function getHTML(flightsPair) {
 	dateThere.setMinutes(dateThere.getMinutes() + dateThere.getTimezoneOffset());
 	dateBack.setMinutes(dateBack.getMinutes() + dateBack.getTimezoneOffset());
 
+	const hoursThere = flightsPair.there.hours.join(", ") || "unknown";
+	const hoursBack = flightsPair.back.hours.join(", ") || "unknown";
+
 	return "<li class=\"flight \">" +
 			"<div class=\"flight-summary\">" + priceTotal + "<br/>" + flightsPair.spanInDays + " days</div>" +
 			"<div class=\"flight-details\">" +
-				"<div class=\"flight-details-there " + flightsPair.there.carrier + "\">" +
+				"<div class=\"flight-details-there " + flightsPair.there.carrier + "\"" +
+					" title=\"" + hoursThere + "\">" +
 					flightsPair.there.from + "-" + flightsPair.there.to + ", " +
 					dateThere.toDateString() + ", " + priceThere +
 				"</div>" +
-				"<div class=\"flight-details-back " + flightsPair.back.carrier + "\">" +
+				"<div class=\"flight-details-back " + flightsPair.back.carrier + "\"" +
+					" title=\"" + hoursBack + "\">" +
 					flightsPair.back.from + "-" + flightsPair.back.to + ", " +
 					dateBack.toDateString() + ", " + priceBack +
 				"</div>" +
