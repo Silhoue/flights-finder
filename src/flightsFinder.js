@@ -7,6 +7,7 @@ const wizzAirHandler = require("./wizzAirHandler");
 module.exports = function findFlights (body) {
 	const airportsFrom = body.airportsFrom
 	const airportsTo = body.airportsTo
+	const airportToLock = body.airportToLock
 	const minDate = new Date(body.minDate)
 	const maxDate = new Date(body.maxDate)
 	const allowedDaysThere = body.allowedDaysThere
@@ -31,7 +32,9 @@ module.exports = function findFlights (body) {
 			flightsThere.forEach(function (flightThere) {
 				flightsBack.forEach(function (flightBack) {
 					const spanInDays = getSpanInDays(flightThere, flightBack)
-					if (spanInDaysMax >= spanInDays && spanInDays >= spanInDaysMin) {
+					var isSpanInDaysRight = (spanInDaysMax >= spanInDays && spanInDays >= spanInDaysMin);
+					var isAirportToRight = (!airportToLock || flightThere.to === flightBack.from);
+					if (isSpanInDaysRight && isAirportToRight) {
 						flightsPairs.push({
 							price: +((flightThere.price + (flightBack.price * currencyRatio)).toFixed(2)),
 							spanInDays: spanInDays,

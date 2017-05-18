@@ -68,6 +68,7 @@ button {
 }
 .advanced-options-toggle.active ~ .advanced-options {
 	display: inline-block;
+	vertical-align: middle;
 }
 .advanced-options {
 	display: none;

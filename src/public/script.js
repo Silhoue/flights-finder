@@ -20,6 +20,7 @@ function findFlights (e) {
 		body: JSON.stringify({
 			airportsFrom: formData.airportsFrom.value.trim().split(/\W+/),
 			airportsTo: formData.airportsTo.value.trim().split(/\W+/),
+			airportToLock: formData.airportToLock.checked,
 			minDate: formData.minDate.value,
 			maxDate: formData.maxDate.value,
 			allowedDaysThere: getAllowedDays(formData.allowedDaysThere.elements),
