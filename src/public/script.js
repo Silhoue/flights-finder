@@ -18,8 +18,8 @@ function findFlights (e) {
       		"Content-Type": "application/json"
     	},
 		body: JSON.stringify({
-			airportsFrom: formData.airportsFrom.value.trim().split(/\W+/),
-			airportsTo: formData.airportsTo.value.trim().split(/\W+/),
+			airportsFrom: getSanitizedList(formData.airportsFrom.value),
+			airportsTo: getSanitizedList(formData.airportsTo.value),
 			airportToLock: formData.airportToLock.checked,
 			minDate: formData.minDate.value,
 			maxDate: formData.maxDate.value,
@@ -44,6 +44,12 @@ function findFlights (e) {
 	})
 	.catch(function (error) {
 		results.innerHTML = error.message;
+	})
+}
+
+function getSanitizedList (input) {
+	return input.split(/\W+/).filter(function (item) {
+		return item !== "";
 	})
 }
 
