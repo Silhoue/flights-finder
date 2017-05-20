@@ -1,58 +1,43 @@
-const fs = require("fs");
-const fetch = require("node-fetch");
+const store = require("./store");
 
 const ryanairAirportsUrl = "https://api.ryanair.com/aggregate/4/common?embedded=airports";
 const wizzairAirportsUrl = "https://be.wizzair.com/5.1.2/Api/asset/map?languageCode=en-gb"
-const airportsFileName = "airports.json";
-const space = 4;
+const filePath = __dirname + "/../data/airports.json";
 const airportPrefix = /^airport:/;
 
-Promise.all([
-    fetch(ryanairAirportsUrl)
-        .then(function (response) {
-            return response.json();
-        }),
-    fetch(wizzairAirportsUrl)
-        .then(function (response) {
-            return response.json();
-        })
-    ])
-    .then(function (response) {
-        var airports = mergeAirports(response[0].airports, response[1].cities);
-        writeToFile(airports, __dirname + "/" + airportsFileName);
-    })
-    .catch(function(error) {
-        console.log(error.stack)
-    });
+store.fetchAndSave(ryanairAirportsUrl, wizzairAirportsUrl, mergeAirports, filePath);
 
-
-function mergeAirports(ryanairAirports, wizzairAirports) {
-    var result = {};
+function mergeAirports(response) {
+    const ryanairAirports = response[0].airports;
+    const wizzairAirports = response[1].cities;
+    const result = {};
 
     ryanairAirports.forEach(function (airport) {
-        var routes = airport.routes.filter(function(route) {
-            return airportPrefix.test(route)
+        const routes = [];
+
+        airport.routes.forEach(function(route) {
+            if (airportPrefix.test(route)) {
+                routes.push(route.replace(airportPrefix, ""))
+            }
         })
-        for (var i = 0; i < routes.length; i++) {
-            routes[i] = routes[i].replace(airportPrefix, "");
-        };
 
         result[airport.iataCode] = {
-            countryCode: airport.countryCode,
+            country: airport.countryCode.toUpperCase(),
             ryanairName: airport.name,
             ryanairRoutes: routes
         };
     });
 
     wizzairAirports.forEach(function (airport) {
-        var routes = airport.connections.reduce(function(result, next) {
-            result.push(next.iata)
-            return result;
-        }, []);
+        const routes = [];
+
+        airport.connections.forEach(function(connection) {
+            routes.push(connection.iata)
+        });
 
         if (!result[airport.iata]) {
             result[airport.iata] = {
-                countryCode: airport.countryCode.toLowerCase()
+                country: airport.countryCode
             };
         }
 
@@ -61,14 +46,4 @@ function mergeAirports(ryanairAirports, wizzairAirports) {
     });
 
     return result;
-}
-
-function writeToFile(sourceObject, destinationFilePath) {
-    fs.writeFile(destinationFilePath, JSON.stringify(sourceObject, null, space), function (err) {
-        if (err) {
-            console.log(err);
-        } else {
-            console.log("Saved " + Object.keys(sourceObject).length + " airports data.");
-        }
-    });
 }
